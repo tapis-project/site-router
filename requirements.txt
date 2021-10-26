@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+ipython
+gunicorn
+redis
+jsonschema
+pyjwt==1.7.1
+cryptography
+requests

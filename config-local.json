@@ -1,0 +1,5 @@
+{
+    "service_name": "site-router",
+    "service_site_id": "tacc",
+    "tenants": ["admin"]
+}

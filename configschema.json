@@ -1,0 +1,32 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "$id": "http://github.com/tapis-project/tapisflask/schemas/configschema.json",
+    "type": "object",
+    "properties": {
+        "redis_host": {
+            "type": "string",
+            "description": "The host address (i.e., network address) of the Redis server.",
+            "default": "172.17.0.1"
+        },
+        "redis_port": {
+            "type": "integer",
+            "description": "The port of the Redis server.",
+            "default": 6379
+        },
+        "redis_password": {
+            "type": "string",
+            "description": "The password to connect to Redis. If blank, will not try to connect using a password.",
+            "default": ""
+        },
+        "redis_token_db":{
+            "type": "integer",
+            "description": "The Redis database of revoked tokens.",
+            "default": 0
+        },
+        "redis_user_db":{
+            "type": "integer",
+            "description": "The Redis database of blocked users.",
+            "default": 1
+        }
+    }
+}
