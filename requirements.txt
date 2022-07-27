@@ -7,3 +7,5 @@ jsonschema
 pyjwt==1.7.1
 cryptography
 requests
+tapisservice
+pytest==5.1.2

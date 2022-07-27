@@ -6,6 +6,8 @@ import redis
 from service.config import conf
 from service.errors import BaseTapisError
 
+from tapisservice.logs import get_logger
+logger = get_logger(__name__)
 
 
 def get_redis_connection(db):
@@ -14,6 +16,17 @@ def get_redis_connection(db):
 
 # db access
 tokens_store = get_redis_connection(db=conf.redis_token_db)
+
+def check_db_connectivity():
+    """
+    Simple helper function that can be used to check that site-router can communicate with its db.
+    """
+    # try to compute the length
+    try:
+        len(tokens_store.keys())
+    except Exception as e:
+        logger.error(f"could not connect to redis db; details: {e}")
+        raise e
 
 
 def add_token_to_store(jwt: str, claims: dict) -> int:

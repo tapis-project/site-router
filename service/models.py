@@ -22,7 +22,7 @@ class ErrorResponse(BaseModel):
 
 
 # --------------------------
-# Success Reponse Models
+# Success Response Models
 # --------------------------
 
 class SuccessResponse(BaseModel):

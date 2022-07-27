@@ -24,7 +24,12 @@ WORKDIR /home/tapis
 COPY configschema.json /home/tapis/configschema.json
 COPY config-local.json /home/tapis/config.json
 COPY service /home/tapis/service
+COPY entry.sh /home/tapis/entry.sh
+COPY test_run_entry.sh /home/tapis/test_run_entry.sh
+USER root
+RUN chmod +x /home/tapis/entry.sh
+RUN chmod +x /home/tapis/test_run_entry.sh
+RUN chown -R tapis:tapis /home/tapis
 
-
-# During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "-k", "uvicorn.workers.UvicornWorker", "service.api:app"]
+USER tapis
+CMD ["/home/tapis/entry.sh"]

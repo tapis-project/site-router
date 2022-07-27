@@ -1,5 +1,9 @@
 {
     "service_name": "site-router",
+    "service_password": "abcd1234",
+    "primary_site_admin_tenant_base_url": "https://admin.develop.tapis.io",
     "service_site_id": "tacc",
-    "tenants": ["admin"]
+    "service_tenant_id": "admin",    
+    "tenants": ["admin"],
+    "log_level": "DEBUG"
 }

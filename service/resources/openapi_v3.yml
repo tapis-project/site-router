@@ -1,0 +1,133 @@
+openapi: "3.0.2"
+
+info:
+  title: "Site-Router"
+  description: "Tapis server deployed at the edge of a site for API routing and basic auth checks."
+  version: "1"
+  termsOfService: "https://tapis-project.org"
+  contact:
+    name: "Site-Router"
+    url: "https://tapis-project.org"
+    email: "cicsupport@tacc.utexas.edu"
+  license:
+    name: "BSD 3"
+    url: "https://github.com/tapis-project/site-router"
+
+servers:
+- url: http://localhost:5000
+  description: Local Development
+- url: http://{tenant_id_url}.develop.tapis.io
+  description: Tapis Develop instance
+  variables:
+    tenant_id_url:
+      default: dev
+      description: The tenant_id associated with the request.
+- url: /
+  description: catch-all server definition for other Tapis instances.
+
+paths:
+  /v3/site-router/hello:
+    get:
+      tags:
+        - Health Check
+      description: Logged connectivity test. No authorization required.
+      operationId: hello
+      responses:
+        '200':
+          description: Message received.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '500':
+          description: Server error.
+  /v3/site-router/ready:
+    get:
+      tags:
+        - Health Check
+      description: Logged connectivity test. No authorization required.
+      operationId: ready
+      responses:
+        '200':
+          description: Message received.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '500':
+          description: Server error.
+
+  /v3/site-router/tokens/revoke:
+    post:
+      tags:
+        - Tokens
+      operationId: revoke_token
+      description: Revoke a Tapis JWT. This request can only be made by the Tokens API for the site. Once revoked, a token cannot be unrevoked. 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeTokenRequest'
+      responses:
+        '200':
+          description: Token Revoked
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BasicResponse'
+  /v3/site-router/tokens/check:
+    get:
+      tags:
+        - Tokens
+      operationId: check_token
+      description: Check whether a token has been revoked. Returns a 200 if the token is valid (i.e., has not been revoked) and a 400 if the token has been revoked. Pass the token to check as a header using the X-Tapis-Token header. 
+      parameters:
+        - in: header
+          name: X-Tapis-Token
+          schema:
+            type: string
+          required: true
+          description: The token to check 
+      responses:
+        '200':
+          description: Token is still valid
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Token has been revoked and is not valid
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BasicResponse'
+ 
+components:
+  schemas:
+    BasicResponse:
+      type: object
+      properties:
+        version:
+          type: string
+          description: Version of the API
+        message:
+          type: string
+          description: Brief description of the response
+        status:
+          type: string
+          description: Whether the request was a success or failure.
+          enum: [success, failure]
+        metadata:
+          type: object
+          description: Metadata about the result object, including pagination information
+
+    RevokeTokenRequest:
+      type: object
+      properties:
+        token:
+          type: string
+          description: The Tapis JWT to revoke.

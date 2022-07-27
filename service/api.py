@@ -6,18 +6,33 @@ from redis import client
 from service.models import TokenBody, ErrorResponse, SuccessResponse
 from service.auth import check_can_update, do_authn
 from service.config import conf
-from service.db import add_token_to_store, check_if_token_revoked
+from service.db import add_token_to_store, check_if_token_revoked, check_db_connectivity
+
+from tapisservice.logs import get_logger
+logger = get_logger(__name__)
 
 app = FastAPI()
 
 
-@app.get('/ready', response_model=SuccessResponse)
+@app.get('/v3/site-router/hello', response_model=SuccessResponse)
+async def hello():
+    """
+    Basic health check
+    """
+    return SuccessResponse(message=f'site-router serving site {conf.service_site_id} ready.')
+
+@app.get('/v3/site-router/ready', response_model=SuccessResponse)
 async def ready():
+    """
+    Health check that includes checking communication with db.
+    """
+    check_db_connectivity()
     return SuccessResponse(message=f'site-router serving site {conf.service_site_id} ready.')
 
 
 @app.post("/v3/site-router/tokens/revoke", response_model=Union[ErrorResponse, SuccessResponse])
 async def revoke_token(token: TokenBody, response: Response, x_tapis_token: str = Header(None)):
+    logger.debug("top of /v3/site-router/tokens/revoke")
     try:
         authorized = check_can_update(x_tapis_token)
     except Exception as e:
@@ -25,9 +40,10 @@ async def revoke_token(token: TokenBody, response: Response, x_tapis_token: str 
         return ErrorResponse(message=e.msg)
     if not authorized:
         response.status_code = status.HTTP_401_UNAUTHORIZED
-        return ErrorResponse(message='Not authnorized.')
+        return ErrorResponse(message='Not authorized.')
+    logger.debug("revoke request is authorized.")
     try:
-        claims = do_authn(token.token)
+        claims = do_authn(token.token, check_signature=False)
     except Exception as e:
         response.status_code = e.code
         return ErrorResponse(message=f"The token to be revoked is invalid; additional data: {e.msg}")
@@ -39,7 +55,7 @@ async def revoke_token(token: TokenBody, response: Response, x_tapis_token: str 
     return SuccessResponse(message=f"Token {claims['jti']} has been revoked.")
 
 
-@app.get("/v3/site-router/check", response_model=Union[ErrorResponse, SuccessResponse])
+@app.get("/v3/site-router/tokens/check", response_model=Union[ErrorResponse, SuccessResponse])
 async def check_token(response: Response, x_tapis_token: str = Header(None)):
     if not x_tapis_token:
         response.status_code = status.HTTP_400_BAD_REQUEST

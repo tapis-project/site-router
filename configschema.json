@@ -3,6 +3,10 @@
     "$id": "http://github.com/tapis-project/tapisflask/schemas/configschema.json",
     "type": "object",
     "properties": {
+        "python_framework_type": {
+            "type": "string",
+            "default": "fastapi"
+          },
         "redis_host": {
             "type": "string",
             "description": "The host address (i.e., network address) of the Redis server.",
