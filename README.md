@@ -15,7 +15,7 @@ Note that the JWT must be valid or attempting to revoke it will result in an err
 
 Check if a token is revoked:
 ```
-curl -H "X-tapis-token: $some_jwt" localhost:8000/v3/site-router/check
+curl -H "X-tapis-token: $some_jwt" localhost:8000/v3/site-router/tokens/check
 ```
 
 ## Local Development
