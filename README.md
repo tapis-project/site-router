@@ -21,3 +21,8 @@ curl -H "X-tapis-token: $some_jwt" localhost:8000/v3/site-router/check
 ## Local Development
 
 A Makefile is included to automate the steps required to build and run the service locally. Check the file for the commands to run. 
+
+### Secret Updates
+Before being able to deploy the services and run the tests, update the following files/secrets:
+
+1. Add the `TOKENS_API_TOKEN` in the `docker-compose.yml` file. This is a token representing either the tenants or tokens API and is needed to run the tests.
