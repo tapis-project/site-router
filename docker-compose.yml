@@ -7,6 +7,8 @@ services:
     image: tapis/site-router-api
     ports:
       - 8000:8000
+    volumes:
+      - ./config-local.json:/home/tapis/config.json
 
   redis:
     image: redis
