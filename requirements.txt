@@ -9,3 +9,4 @@ cryptography
 requests
 tapisservice
 pytest==5.1.2
+httpx
