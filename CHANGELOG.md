@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 
-## 1.3.0 - 2022-8-31 (target)
+## 1.3.0 - 2023-3-14
 ### Added
 - Initial release.
 
